@@ -29,8 +29,58 @@ knitr::opts_chunk$set(echo = FALSE)
 - Connects well with version control software like GitHub
 - Can open multiple projects in multiple windows
 
-- Projects negate the need for `setwd()` or sharing 
+### Projects: The Single Solution To Many Problems 
+
+- Projects solve all of the following problems:
+    1. Organizing your files (data, plots, text, citations, etc)
+    2. Having an accessible working directory (for loading and saving data, plots, etc)
+    3. Saving and reloading your commands history and preferences
+    4. Sending files to collaborators, so they have the same working directory as you
+
+### Creating a Project
+
+![](images/project1.png)
 
 
-- Opening up a `.Rproj` allows anyone to take the entire project and replicate or modify it on top 
-- You should never use absolute paths in your scripts, because they hinder sharing: no one else will have exactly the same directory configuration as you.
+### Creating a Project
+
+![](images/project2.png)
+
+### Creating a Project
+
+![](images/project3.png)
+
+### Creating a Project
+
+![](images/project4.png)
+
+
+### Switching Between Projects
+
+![You can easily open and switch between multiple projects](images/projectswitching.png)
+
+### Loading Someone Else's Project
+
+![Click the green button, open .Rproj file in R Studio](images/github.png)
+
+### The Structure of This Project
+
+![The Folder Hierarchy of this Project](images/projectfiles.png)
+
+
+### The Structure of This Project
+
+![Good Naming Practices for Scripts!](images/scripts.png)
+
+### The Structure of This Project
+
+![Data from Multiple Sources, Combined into one Clean Final version](images/data.png)
+
+### The Structure of This Project
+
+- Look at the `Example_paper.Rmd`
+    - Uses data from **Data** folder
+    - Uses `.R` scripts from **Scripts** folder
+    - Uses `bibexample.bib` from **Bibliography** folder
+- This file is `workflow.presentation.Rmd` in **Presentation** folder
+

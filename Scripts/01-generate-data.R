@@ -9,14 +9,10 @@ set.seed(1) # make "random" results reproducible
 shape_types<-c("square", "circle","rectangle", "triangle")
 shape<-sample(shape_types,500,replace=TRUE)
 
-letters<-LETTERS(1:26)
-letter<-sample(letters,500,replace=TRUE)
-
 df<-data.frame(id=seq(1,500,1), # 
                x=rnorm(500,5,1), # 500 random draws from a normal distr with mean 5 and sd 1
                y=rnorm(500,1,10), # 500 random draws from a uniform distr between 1 and 10
-               shape=factor(shape),
-               letter=factor(letter))
+               shape=factor(shape))
 
 # a second dataframe with useful information about the same 500 individuals
 

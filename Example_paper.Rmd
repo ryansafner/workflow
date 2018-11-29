@@ -1,0 +1,155 @@
+---
+title: "Example Paper"
+author: "Ryan Safner"
+date: "11/29/2018"
+output: pdf_document
+abstract: In this paper, I use fake data I created to demonstrate how to organize your files and manage your workflow effectively. 
+bibliography: Bibliography/bibexample.bib
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Introduction
+
+I am managing all of my files (paper, references, data, code, and figures) by creating an `R Project`. This sets my working directory `wd()` to a folder on my computer where the `R Project` is stored. Everything that I put within this folder (including folders, for my Data, my Figures, etc.) is accessible from the same starting directory. I can send the entire project to you, and you can use all of the content easily, since all files are referenced *relative* to the project's directory folder. 
+
+# Literature Review
+
+> "Here is an example quote from this article." @citekey1[p.2]
+
+@citekey2[p.12] says "this short quote", disagreeing with @citekey1[].
+
+See also the references appear at the end of the document now (we just need to add a `# References` or `# Bibliography` at the end of the file to create a section for them). It lists all the references you cited in alphabetical order. 
+
+# Data Creation
+
+I first created my random data with the script `01-generate-data.R` in my **Scripts** folder: i.e. `/Scripts/01-generate-data.R`. I reproduced the code here in an `R` chunk in this `R Markdown` document:
+
+```{r}
+# You normally would not need this script, but for illustrative purposes, I am going to generate
+# my own "fake" data to use for this project, rather than loading some pre-existing dataset
+
+# generate random data
+set.seed(1) # make "random" results reproducible
+
+# make dataframe df of random data
+
+shape_types<-c("square", "circle","rectangle", "triangle")
+shape<-sample(shape_types,500,replace=TRUE)
+
+df<-data.frame(id=seq(1,500,1), # 
+               x=rnorm(500,5,1), # 500 random draws from a normal distr with mean 5 and sd 1
+               y=rnorm(500,1,10), # 500 random draws from a uniform distr between 1 and 10
+               shape=factor(shape))
+
+# a second dataframe with useful information about the same 500 individuals
+
+states<-c("AK","AL","AR","AZ","CA", "CO", "CT", "DC", "DE", "FL", "GA", "HI",
+         "IA", "ID", "IL", "IN", "KS", "KY", "LA", "MA", "MD", "ME", "MI",
+         "MN", "MO", "MS", "MT", "NC", "ND", "NE", "NH", "NJ", "NM", "NV",
+         "NY", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT",
+         "VA", "VT", "WA", "WI", "WV", "WY")
+state<-sample(states,500,replace=TRUE)
+
+df2<-data.frame(id=seq(1,500,1), # 
+                state=factor(state))
+
+# save data to csv
+write.csv(df, file="Data/rawdata1.csv")
+write.csv(df2, file="Data/rawdata2.csv")
+
+```
+
+This produces two files, `rawdata1.csv` and `rawdata2.csv`, which I saved in my **Data** folder (i.e. `/Data`). 
+
+# Data Wrangling
+
+I then loaded the `fake` data I made with my second script in **Scripts**, `Scripts/02-data.cleaning.R`, reproduced below. 
+
+```{r}
+
+# Load data 
+mydf1<-read.csv("Data/rawdata1.csv")
+mydf2<-read.csv("Data/rawdata2.csv")
+
+# join data
+library("dplyr")
+clean_data<-inner_join(mydf1, mydf2, key=id)
+
+# save as clean data 
+write.csv(clean_data, file="Data/clean_data.csv")
+```
+
+This takes my separate data frames and joins them together into a single `data.frame`, which I saved for later use as `clean_data.csv`.
+
+# Summary Statistics
+
+```{r, results="asis"}
+library("stargazer")
+stats<-subset(clean_data,select=c("x","y"))
+
+stargazer(data=stats, type="latex",  digits=2, summary.stat = c("n", "mean", "sd", "min", "p25", "median", "P75", "max"),column.labels = c("Obs", "Mean", "Std. Dev.", "Min", "Q1", "Median", "Q3", "Max"),header=FALSE, float=FALSE)
+```
+
+# Plots 
+
+```{r}
+# load packages
+library("ggplot2")
+
+# load data
+
+clean_data<-read.csv("Data/clean_data.csv")
+
+# scatterplot
+
+s1<-ggplot(data = clean_data, aes(x=x, y=y))+
+  geom_point()
+s1
+ggsave("Figures/fig1", device="eps")
+```
+
+```{r}
+h1<-ggplot(data = clean_data, aes(x=x, fill=shape))+
+  geom_histogram(color="black", bins=10)+
+  facet_grid(cols=vars(shape))
+h1
+
+```
+
+```{r}
+s2<-ggplot(data = clean_data, aes(x=x, y=y, color=shape))+
+  geom_point()+
+  geom_smooth(method="lm")+
+  facet_grid(cols=vars(shape))
+s2
+```
+```{r}
+ggsave("Figures/fig2", device="eps")
+
+s3<-ggplot(data = clean_data, aes(x=x, y=y))+
+  geom_point()
+s3
+ggsave("Figures/fig3", device="eps")
+#
+
+```
+
+
+```{r, results="asis"}
+reg1<-lm(y~x, data=clean_data)
+summary(reg1)
+
+reg2<-lm(y~x+shape, data=clean_data)
+summary(reg2)
+
+reg3<-lm(y~x+shape+state, data=clean_data)
+summary(reg3)
+
+library("stargazer")
+
+stargazer(reg1, reg2, reg3, omit=c(state), column.labels = c("","","With State-effects"), type="latex",header=F, float=F)
+```
