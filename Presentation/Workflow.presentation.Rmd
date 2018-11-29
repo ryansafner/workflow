@@ -1,0 +1,36 @@
+---
+title: "Managing Your Workflow with `RProject`s"
+subtitle: "ECON 480 - Econometrics - Fall 2018"
+author: "Ryan Safner"
+date: "November 26, 2018"
+output: 
+  beamer_presentation:
+    #theme: "metropolis"
+    incremental: true 
+    fig_caption: yes
+    toc: true 
+    slide_level: 3
+    includes:
+      in_header: header.tex
+    keep_tex: no 
+    latex_engine: xelatex #required for Fira Sans font to render properly 
+
+classoption: aspectratio=169
+#fontsize:bigger
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+### Projects
+
+- A **project** is a way of systematically organizing your `R` history, working directory, and related files in a single package
+- Can easily be sent to others who can reproduce your work easily 
+- Connects well with version control software like GitHub
+- Can open multiple projects in multiple windows
+
+- Projects negate the need for `setwd()` or sharing 
+
+
+- Opening up a `.Rproj` allows anyone to take the entire project and replicate or modify it on top 
+- You should never use absolute paths in your scripts, because they hinder sharing: no one else will have exactly the same directory configuration as you.
