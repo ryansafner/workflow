@@ -9,7 +9,7 @@ bibliography: Bibliography/bibexample.bib
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo=FALSE, warning = FALSE, message = FALSE)
 ```
 
 # Introduction
@@ -18,138 +18,78 @@ I am managing all of my files (paper, references, data, code, and figures) by cr
 
 # Literature Review
 
+I use the citekeys (beginning with `@`) from my `bibexample.bib` file in the **Bibliography** folder which contains all of my references, any time I wish to cite a reference in my text. 
+
 > "Here is an example quote from this article." @citekey1[p.2]
 
 @citekey2[p.12] says "this short quote", disagreeing with @citekey1[].
 
-See also the references appear at the end of the document now (we just need to add a `# References` or `# Bibliography` at the end of the file to create a section for them). It lists all the references you cited in alphabetical order. 
+See also the references mentioned appear at the end of the document now (I just need to add a `# References` or `# Bibliography` at the end of the file to create a section for them). It lists all the references you cited in alphabetical order. 
 
 # Data Creation
 
-I first created my random data with the script `01-generate-data.R` in my **Scripts** folder: i.e. `/Scripts/01-generate-data.R`. I reproduced the code here in an `R` chunk in this `R Markdown` document:
+I first created my random data with the script `01-generate-data.R` in my **Scripts** folder. This produces two files, `rawdata1.csv` and `rawdata2.csv`,[^1] which I saved in my **Data** folder. My second script, `02-data-cleaning.R` takes the two data files and merges them in to a single dataset, which I save as `clean_data.csv` in my **Data** folder for later keeping. I can then send out `clean_data.csv` to coauthors and spectators who wish to use my data, but I can always justify where it came from because running `02-data-cleaning.R` on the two raw data sources, `rawdata1.csv` and `rawdata2.csv` will always produce `clean_data.csv` for anyone who runs it!  
 
-```{r}
-# You normally would not need this script, but for illustrative purposes, I am going to generate
-# my own "fake" data to use for this project, rather than loading some pre-existing dataset
+[^1]: This is to show that often we will need to import multiple data files and wrangle them into a tidy format for data analysis! 
 
-# generate random data
-set.seed(1) # make "random" results reproducible
-
-# make dataframe df of random data
-
-shape_types<-c("square", "circle","rectangle", "triangle")
-shape<-sample(shape_types,500,replace=TRUE)
-
-df<-data.frame(id=seq(1,500,1), # 
-               x=rnorm(500,5,1), # 500 random draws from a normal distr with mean 5 and sd 1
-               y=rnorm(500,1,10), # 500 random draws from a uniform distr between 1 and 10
-               shape=factor(shape))
-
-# a second dataframe with useful information about the same 500 individuals
-
-states<-c("AK","AL","AR","AZ","CA", "CO", "CT", "DC", "DE", "FL", "GA", "HI",
-         "IA", "ID", "IL", "IN", "KS", "KY", "LA", "MA", "MD", "ME", "MI",
-         "MN", "MO", "MS", "MT", "NC", "ND", "NE", "NH", "NJ", "NM", "NV",
-         "NY", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT",
-         "VA", "VT", "WA", "WI", "WV", "WY")
-state<-sample(states,500,replace=TRUE)
-
-df2<-data.frame(id=seq(1,500,1), # 
-                state=factor(state))
-
-# save data to csv
-write.csv(df, file="Data/rawdata1.csv")
-write.csv(df2, file="Data/rawdata2.csv")
-
-```
-
-This produces two files, `rawdata1.csv` and `rawdata2.csv`, which I saved in my **Data** folder (i.e. `/Data`). 
-
-# Data Wrangling
-
-I then loaded the `fake` data I made with my second script in **Scripts**, `Scripts/02-data.cleaning.R`, reproduced below. 
-
-```{r}
-
-# Load data 
-mydf1<-read.csv("Data/rawdata1.csv")
-mydf2<-read.csv("Data/rawdata2.csv")
-
-# join data
-library("dplyr")
-clean_data<-inner_join(mydf1, mydf2, key=id)
-
-# save as clean data 
-write.csv(clean_data, file="Data/clean_data.csv")
-```
-
-This takes my separate data frames and joins them together into a single `data.frame`, which I saved for later use as `clean_data.csv`.
+\clearpage 
 
 # Summary Statistics
 
-```{r, results="asis"}
-library("stargazer")
-stats<-subset(clean_data,select=c("x","y"))
+Here are some summary statistics of my data, the script for which is saved in **Scripts** as `03-summary-statistics.R`. I reproduce the script as `R` chunks in my `R Markdown .Rmd` document to demonstrate that everything *could* be produced in one document. I hide the raw code by setting `echo=FALSE` in the chunk options, since I do not wish to display code in my final paper. 
 
-stargazer(data=stats, type="latex",  digits=2, summary.stat = c("n", "mean", "sd", "min", "p25", "median", "P75", "max"),column.labels = c("Obs", "Mean", "Std. Dev.", "Min", "Q1", "Median", "Q3", "Max"),header=FALSE, float=FALSE)
+```{r, summary-statistics, echo=FALSE}
+# load R scripts to use 
+source("Scripts/02-data-cleaning.R")
+source("Scripts/03-summary-statistics.R")
+
+# prints summary statistics table (based on Script 3)
+df.sum.tidy
 ```
+
+```{r}
+table(clean_data$shape) %>%
+  kable()
+```
+
+\clearpage
 
 # Plots 
 
-```{r}
-# load packages
-library("ggplot2")
+Here, I load as images from my **Figures** folder some of the plots that I generated in my `04-plots.R` script in my **Scripts** folder. 
 
-# load data
+![Histogram of x](Figures/hist_of_x.pdf)
 
-clean_data<-read.csv("Data/clean_data.csv")
+![Scatterplot of x and y](Figures/scatter.png)
 
-# scatterplot
+\clearpage
 
-s1<-ggplot(data = clean_data, aes(x=x, y=y))+
-  geom_point()
-s1
-ggsave("Figures/fig1", device="eps")
-```
+# Regressions 
 
-```{r}
-h1<-ggplot(data = clean_data, aes(x=x, fill=shape))+
-  geom_histogram(color="black", bins=10)+
-  facet_grid(cols=vars(shape))
-h1
+I run three regressions with my fake data. The first is a simple regression of $y$ on $x$:  
 
-```
+$$Y_i=\beta_0+\beta_1X_i$$ 
 
-```{r}
-s2<-ggplot(data = clean_data, aes(x=x, y=y, color=shape))+
-  geom_point()+
-  geom_smooth(method="lm")+
-  facet_grid(cols=vars(shape))
-s2
-```
-```{r}
-ggsave("Figures/fig2", device="eps")
+The second is augmented by including a dummy variable for each of the four categories of `shape` (omitting triangle).
 
-s3<-ggplot(data = clean_data, aes(x=x, y=y))+
-  geom_point()
-s3
-ggsave("Figures/fig3", device="eps")
-#
-
-```
-
+$$Y_i=\beta_0+\beta_1X_1+\beta_2circle_i+\beta_3rectangle_i+\beta_4square_i$$
 
 ```{r, results="asis"}
-reg1<-lm(y~x, data=clean_data)
-summary(reg1)
-
-reg2<-lm(y~x+shape, data=clean_data)
-summary(reg2)
-
-reg3<-lm(y~x+shape+state, data=clean_data)
-summary(reg3)
-
-library("stargazer")
-
-stargazer(reg1, reg2, reg3, omit=c(state), column.labels = c("","","With State-effects"), type="latex",header=F, float=F)
+# load regressions from Scripts/05-regressions.R
+source("Scripts/05-regressions.R")
 ```
+
+The third adds "state-fixed effects" using the Least Squares Dummy Variable method.[^2] 
+
+$$Y_i=\beta_0+\beta_1X_1+\beta_2circle_i+\beta_3rectangle_i+\beta_4square_i+\alpha_i$$
+
+All of the regressions are run in the script `05-regressions.R` in the **Scripts** folder. I import the script and use an `R` chunk below to run `stargazer` to generate the regression table. 
+
+```{r, results="asis"}
+source("Scripts/05-regressions.R")
+stargazer(reg1, reg2, reg3, omit=c("state"), column.labels = c("","","With State-effects"), type="latex",header=F, float=F)
+```
+
+[^2]: To avoid showing all of the state dummies, I add `omit=c("state")` to the `stargazer()` command. 
+
+# References
