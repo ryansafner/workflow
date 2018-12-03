@@ -39,25 +39,37 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ### Creating a Project
 
-![](images/project1.png)
+![`File` $\rightarrow$ `New Project...`](images/project1.png)
 
-
-### Creating a Project
+### Creating a Project II
 
 ![](images/project2.png)
 
-### Creating a Project
+### Creating a Project: Types
+
+- In almost all cases, you simply want a `New Project`
+- For more advanced uses, your project can be an `R Package` or a `Shiny Web Application`
+- If you have other packages that create templates installed (as I do, in the previous image), they will also show up as options
+
+### Creating a Project III 
 
 ![](images/project3.png)
 
-### Creating a Project
+### Creating a Project III 
+
+- Enter a name for the project in the top field 
+    - Also creates a folder on your computer with the name you enter into the field
+- Choose the location of the folder on your computer
+- Depending on if you have other packages or utilities installed (such as `git`), there may be additional options, do not check them unless you know what you are doing
+- Lastly, the bottom left checkbox allows you to open a new instance (window) of `R` just for this project (and keep existing windows open)
+
+### Creating a Project IV 
 
 ![](images/project4.png)
 
-
 ### Switching Between Projects
 
-![You can easily open and switch between multiple projects](images/projectswitching.png)
+![You can easily open and switch between multiple projects (e.g.  Mac's dock shown here)](images/projectswitching.png)
 
 ### Loading Someone Else's Project
 
@@ -78,9 +90,11 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ### The Structure of This Project
 
+- Read the `README` of this repository on GitHub for instructions (automatically shows on the main page)
 - Look at the `Example_paper.Rmd`
     - Uses data from **Data** folder
     - Uses `.R` scripts from **Scripts** folder
+    - Uses figures from **Figures** folder 
     - Uses `bibexample.bib` from **Bibliography** folder
 - This file is `workflow.presentation.Rmd` in **Presentation** folder
 
